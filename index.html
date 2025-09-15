@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Minimal Flip Greeting Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f8f8f8;
+      font-family: 'Inter', sans-serif;
+      color: #222;
+    }
+    .flip-card {
+      width: 340px;
+      height: 460px;
+      perspective: 1200px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transition: transform 0.7s ease;
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%; height: 100%;
+      backface-visibility: hidden;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+    .flip-card-front { }
+    .flip-card-back {
+      transform: rotateY(180deg);
+      padding: 25px 18px 0 18px;
+      justify-content: flex-start;
+      background: #ffffff;
+    }
+    .sun-area {
+      position: relative;
+      width: 100%; height: 195px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #eee;
+    }
+    .sun {
+      position: absolute;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      background: #FBE57A;
+      box-shadow: 0 0 24px 7px rgba(255,200,90,0.18);
+      transition: background 0.6s cubic-bezier(.35,.75,.68,.73);
+    }
+    .wave-container {
+      position: absolute;
+      width: 100%; height: 75px;
+      bottom: 0; left: 0;
+      pointer-events: none;
+    }
+    .wave {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 200%;
+      height: 100%;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'%3E%3Cpath d='M0,40 C150,0 350,60 600,40 C850,20 1050,60 1200,40 V60 H0 Z' fill='%23222' opacity='0.1'/%3E%3C/svg%3E");
+      background-size: 1200px 100%;
+      animation: waveMove 12s linear infinite;
+    }
+    .wave-2 {
+      animation-duration: 8s;
+      opacity: 0.15;
+      bottom: 5px;
+    }
+    @keyframes waveMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%);}
+    }
+    .greetings {
+      text-align: center;
+      padding: 0 20px;
+    }
+    .greetings h1 {
+      font-size: 1.47rem;
+      font-weight: 450;
+      margin-bottom: 12px;
+    }
+    .datetime {
+      font-size: 1rem;
+      margin-bottom: 6px;
+      opacity: 0.82;
+    }
+    .flip-hint {
+      position: absolute;
+      bottom: 15px;
+      font-size: 0.91rem;
+      opacity: 0.6;
+    }
+    /* BACK SIDE styles */
+    .avatar {
+    width: clamp(60px, 15vw, 90px); /* Reduced minimum size from 70px to 60px */
+    height: clamp(60px, 15vw, 90px); /* Reduced minimum size from 70px to 60px */
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+    .header-info { text-align: center; margin-bottom: 20px;}
+    .header-info h2 { font-size: 1.22rem; margin-bottom:9px;}
+    .header-info p { font-size: 0.97rem; opacity:0.82; line-height:1.5;}
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .badge {
+      color: #222;      /* black text and symbols */
+      background: #f0f0f0;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 0.91rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    @media (max-width: 480px) {
+      .flip-card { width: 96vw; height: 400px; }
+      .sun-area { height: 135px; }
+      .greetings h1 { font-size: 1.14rem; }
+      .avatar { width:54px; height:54px; font-size:1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="flip-card" id="flipCard">
+    <div class="flip-card-inner">
+      <!-- FRONT SIDE -->
+      <div class="flip-card-front">
+        <div class="sun-area">
+          <div class="sun" id="sun"></div>
+          <div class="wave-container">
+            <div class="wave"></div>
+            <div class="wave wave-2"></div>
+          </div>
+        </div>
+        <div class="greetings">
+          <h1 id="greetingText">Good Day</h1>
+          <div class="datetime" id="dateText"></div>
+          <div class="datetime" id="timeText"></div>
+        </div>
+        <div class="flip-hint">Click to flip</div>
+      </div>
+      <!-- BACK SIDE -->
+      <div class="flip-card-back">
+        <div class="avatar"><img src="DataTab fullmoon.png" alt="Poornima Doodle"></div>
+        <div class="header-info">
+          <h2>Hello, I'm Fullmoon</h2>
+          <p>I love building tools  <br> that solve real world problems,  <br>from productivity to AI powered helpers.</p>
+        </div>
+        <div class="badges">
+            <span class="badge">⌨ Developer</span>
+            <span class="badge">⚙ Problem Solver</span>
+            <span class="badge">📖 Always Learning</span>
+          </div>
+        <div class="flip-hint">Click to return</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Flip card on click
+    document.getElementById('flipCard').addEventListener('click', function(){
+      this.classList.toggle('flipped');
+    });
+
+    function updateTime() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+
+      // Greeting
+      let greeting;
+      if (hours < 12) greeting = "Good Morning";
+      else if (hours < 18) greeting = "Good Afternoon";
+      else greeting = "Good Evening";
+      document.getElementById('greetingText').textContent = greeting;
+
+      // Date
+      const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('dateText').textContent = now.toLocaleDateString(undefined, dateOptions);
+
+      // Time
+      const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      document.getElementById('timeText').textContent = now.toLocaleTimeString(undefined, timeOptions);
+
+      // Sun position/color calc (6am-6pm arc)
+      updateSunPosition(hours, minutes);
+    }
+
+    function blendColor(c1,c2,k){
+      // c1, c2 RGB array; k: 0..1
+      const blend = c1.map((v,i)=> Math.round(v + (c2[i]-v)*k));
+      return `rgb(${blend},${blend[21]},${blend[1]})`;
+    }
+
+    function updateSunPosition(hours, minutes) {
+      const sun = document.getElementById('sun');
+      const container = document.querySelector('.sun-area');
+      const w = container.offsetWidth, h = container.offsetHeight;
+
+      // time: 6:00 (min) -> 18:00 (max)
+      const totalMinutes = hours * 60 + minutes;
+      let progress = (totalMinutes - 360) / 720; // 6am to 6pm
+      progress = Math.max(0, Math.min(1, progress));
+
+      // Arc movement
+      // Diagonal: (25,h-54) to (w-25,h-54), arc up
+      const x1 = 25, y1 = h-54, x2 = w-25, y2 = h-54, cx = w/2, cy = 20;
+      // Quadratic Bezier
+      function quadBezier(t,p0,p1,p2){
+        return (1-t)*(1-t)*p0 + 2*(1-t)*t*p1 + t*t*p2;
+      }
+      const sunX = quadBezier(progress, x1, cx, x2);
+      const sunY = quadBezier(progress, y1, cy, y2);
+
+      sun.style.left = `${sunX-25}px`;
+      sun.style.top = `${sunY}px`;
+
+      // Sun color: Morning(#FBE57A) → Noon(#FFA600) → Evening(#FF8C4D)
+      let color;
+      if (hours < 12) {
+        let k = progress/0.5; // 0 to 0.5 for morning
+        color = blendColor([251,229,122], [255,166,0], Math.min(1,k));
+      } else if (hours < 18) {
+        let k = (progress-0.5)/0.5; // 0 to 1 for noon to evening
+        color = blendColor([255,166,0], [255,140,77], Math.max(0,Math.min(1,k)));
+      } else {
+        color = 'rgb(255,140,77)';
+      }
+      sun.style.background = color;
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+  </script>
+</body>
+</html>
