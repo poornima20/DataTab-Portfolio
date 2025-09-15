@@ -206,8 +206,9 @@
       // Greeting
       let greeting;
       if (hours < 12) greeting = "Good Morning";
-      else if (hours < 18) greeting = "Good Afternoon";
-      else greeting = "Good Evening";
+      else if (hours < 16) greeting = "Good Afternoon";
+      else if (hours < 20 && hours >= 16) greeting = "Good Evening";
+      else greeting = "Good Night";
       document.getElementById('greetingText').textContent = greeting;
 
       // Date
